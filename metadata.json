@@ -1,0 +1,8 @@
+{
+  "name": "Md. Abir Hosen Joy Portfolio",
+  "description": "Professional portfolio of Md. Abir Hosen Joy",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

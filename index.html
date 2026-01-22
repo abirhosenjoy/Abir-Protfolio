@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Md. Abir Hosen Joy | Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        window.process = window.process || { env: { API_KEY: "" } };
+        
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        heading: ['"Outfit"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f4f6f7',
+                            100: '#e9edef',
+                            400: '#4c6d81',
+                            500: '#37576b',
+                            600: '#233d4d', // User specified theme color
+                            900: '#101c23',
+                        },
+                        dark: {
+                            700: '#3d5a6d',
+                            800: '#2a4759',
+                            900: '#233d4d', // Updated background to match theme color
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(35, 61, 77, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-gradient {
+            background: linear-gradient(to right, #4c6d81, #5eead4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.3;
+        }
+        .loader-dots div {
+            animation: bounce 0.6s infinite alternate;
+        }
+        .loader-dots div:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dots div:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            to { transform: translateY(-10px); }
+        }
+
+        .headline {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            white-space: nowrap;
+            overflow: visible;
+            padding: 1.5rem 0;
+            transition: font-size 0.3s ease;
+        }
+
+        @keyframes headline-glow {
+            0% { filter: brightness(1) drop-shadow(0 0 0 rgba(94, 234, 212, 0)); }
+            50% { filter: brightness(1.2) drop-shadow(0 0 15px rgba(94, 234, 212, 0.3)); }
+            100% { filter: brightness(1) drop-shadow(0 0 0 rgba(94, 234, 212, 0)); }
+        }
+        .headline-animated {
+            animation: headline-glow 6s ease-in-out infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: fit-content;
+            animation: marquee 60s linear infinite;
+        }
+
+        @media (max-width: 480px) { .headline { font-size: 7.2vw; } }
+        @media (min-width: 481px) and (max-width: 768px) { .headline { font-size: 7.5vw; } }
+        @media (min-width: 769px) and (max-width: 1200px) { .headline { font-size: 7.8vw; } }
+        @media (min-width: 1201px) { .headline { font-size: 7.7rem; letter-spacing: -0.02em; } }
+
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: #5eead4 #233d4d;
+        }
+
+        body {
+            overflow-x: hidden;
+            background-color: #233d4d;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #233d4d; }
+        ::-webkit-scrollbar-thumb { background: #37576b; border-radius: 10px; border: 2px solid #233d4d; }
+        ::-webkit-scrollbar-thumb:hover { background: #4c6d81; }
+
+        @media print {
+            body { 
+                background: white !important; 
+                color: black !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .print-hidden, nav, footer, button, .blob, .AIAssistant, #admin-btn { 
+                display: none !important; 
+            }
+            .max-w-6xl { 
+                max-width: 100% !important; 
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .news-print-container {
+                column-count: 2;
+                column-gap: 1.5rem;
+                padding: 1cm;
+            }
+            .news-article-print {
+                break-inside: avoid;
+                margin-bottom: 1.5rem;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 1rem;
+            }
+            .glass-card {
+                background: none !important;
+                backdrop-filter: none !important;
+                border: none !important;
+            }
+            h1, h2, h3 { color: black !important; }
+            img { max-height: 200px !important; width: auto !important; }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+    "react-easy-crop": "https://esm.sh/react-easy-crop@^5.2.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.91.0"
+  }
+}
+</script>
+</head>
+<body class="bg-dark-900 text-slate-300 font-sans antialiased selection:bg-cyan-500/30 selection:text-white">
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+</body>
+</html>
