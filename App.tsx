@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -6,7 +5,6 @@ import About from './components/About';
 import Skills from './components/Skills';
 import Leadership from './components/Leadership';
 import Projects from './components/Projects';
-import Awards from './components/Awards';
 import Connect from './components/Connect';
 import Contact from './components/Contact';
 import AdminPanel from './components/AdminPanel';
@@ -231,7 +229,6 @@ const App: React.FC = () => {
             <Leadership timeline={portfolioData.timeline} />
             <Projects projects={portfolioData.projects} />
             <HomeNewsSection news={portfolioData.news} onReadMore={handleReadMore} />
-            <Awards awards={portfolioData.awards} />
             <Connect profile={portfolioData.profile} />
             <Contact profile={portfolioData.profile} onAdminClick={handleAdminClick} />
           </>

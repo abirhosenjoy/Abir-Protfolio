@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Profile } from '../types';
 
@@ -52,11 +51,6 @@ const Hero: React.FC<HeroProps> = ({ profile, projectCount }) => {
   const blurValue = Math.min(25, scrollY / 15);
   const scaleEffect = 1 + (scrollY / 1500) * 0.08;
 
-  // Dynamically split full name for presentation
-  const nameParts = profile.fullName.split(' ');
-  const firstLine = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : profile.fullName;
-  const secondLine = nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
-
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-28 pb-12 px-4 relative overflow-hidden scroll-mt-20">
       
@@ -97,13 +91,13 @@ const Hero: React.FC<HeroProps> = ({ profile, projectCount }) => {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="inline-block px-4 py-1.5 rounded-full bg-brand-900/40 border border-brand-600/30 text-brand-400 text-[10px] md:text-sm font-bold tracking-widest uppercase backdrop-blur-md">
+            <div className="inline-block px-4 py-1.5 rounded-full bg-brand-900/40 border border-brand-600/30 text-white text-[10px] md:text-sm font-bold tracking-widest uppercase backdrop-blur-md">
               Biomedical Engineer & Tech Innovator
             </div>
             <div className="flex gap-2">
               <a 
                 href={`mailto:${profile.email}`}
-                className="w-8 h-8 md:w-9 md:h-9 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center text-brand-400 hover:bg-brand-600 hover:text-white transition-all shadow-lg backdrop-blur-sm"
+                className="w-8 h-8 md:w-9 md:h-9 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center text-brand-400 hover:text-red-500 hover:bg-slate-700 transition-all shadow-lg backdrop-blur-sm"
               >
                 <i className="fa-solid fa-envelope text-xs"></i>
               </a>
@@ -119,9 +113,8 @@ const Hero: React.FC<HeroProps> = ({ profile, projectCount }) => {
           </div>
         </div>
 
-        <h1 className="text-[6.8vw] sm:text-5xl md:text-7xl lg:text-8xl font-heading font-extrabold text-white mb-8 leading-[1.1] tracking-tighter drop-shadow-2xl px-2 uppercase text-center overflow-visible">
-          <span className="block mb-2 whitespace-nowrap">{firstLine}</span>
-          <span className="text-gradient block whitespace-nowrap">{secondLine}</span>
+        <h1 className="text-[5.5vw] sm:text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-heading font-extrabold mb-8 leading-[1.1] tracking-tighter drop-shadow-2xl px-2 uppercase text-center overflow-visible">
+          <span className="text-gradient block whitespace-nowrap">{profile.fullName}</span>
         </h1>
 
         {/* Updated Hero Bio with Justified alignment and wider container for consistency */}
@@ -145,38 +138,14 @@ const Hero: React.FC<HeroProps> = ({ profile, projectCount }) => {
           </button>
         </div>
         
-        {/* Interactive Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-4 mt-20 border-t border-slate-800/50 pt-10 max-w-6xl mx-auto px-4 relative">
-          <button 
-            onClick={(e) => handleScrollTo(e, 'leadership')}
-            className="group text-center focus:outline-none"
-          >
-            <div className="text-xl md:text-3xl font-bold text-white group-hover:text-brand-400 transition-colors">GPA 5.0</div>
-            <div className="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 group-hover:text-slate-300 transition-colors">Academic</div>
-          </button>
-          
+        {/* Interactive Stats Grid - Simplified to 3 core items */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-4 mt-20 border-t border-slate-800/50 pt-10 max-w-4xl mx-auto px-4 relative">
           <button 
             onClick={(e) => handleScrollTo(e, 'projects')}
             className="group text-center focus:outline-none"
           >
             <div className="text-xl md:text-3xl font-bold text-white group-hover:text-brand-400 transition-colors">{projectCount}+</div>
             <div className="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 group-hover:text-slate-300 transition-colors">Projects</div>
-          </button>
-          
-          <button 
-            onClick={(e) => handleScrollTo(e, 'leadership')}
-            className="group text-center focus:outline-none"
-          >
-            <div className="text-xl md:text-3xl font-bold text-white group-hover:text-brand-400 transition-colors">Top 50</div>
-            <div className="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 group-hover:text-slate-300 transition-colors">Leaders</div>
-          </button>
-
-          <button 
-            onClick={(e) => handleScrollTo(e, 'awards')}
-            className="group text-center focus:outline-none"
-          >
-            <div className="text-xl md:text-3xl font-bold text-white group-hover:text-brand-400 transition-colors">2023</div>
-            <div className="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1 group-hover:text-slate-300 transition-colors">Intl. Award</div>
           </button>
 
           <div className="group text-center cursor-default">

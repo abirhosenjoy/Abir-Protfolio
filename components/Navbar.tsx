@@ -56,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, name, profilePic, onViewChang
   };
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-500 print:hidden ${scrolled ? 'bg-dark-900/95 backdrop-blur-lg border-b border-white/5 h-16 shadow-2xl' : 'bg-transparent h-20'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-500 print:hidden ${scrolled ? 'bg-nav/95 backdrop-blur-lg border-b border-white/5 h-16 shadow-2xl' : 'bg-transparent h-20'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
         <div className="flex items-center justify-between h-full">
           <div 
@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, name, profilePic, onViewChang
               }} />
             </div>
             <span className="inline uppercase font-black tracking-tighter sm:tracking-widest">
-              {name}<span className="text-cyan-400">.</span>
+              <span className="name-gradient">{name}</span><span className="text-cyan-400">.</span>
             </span>
           </div>
           
@@ -108,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({ scrolled, name, profilePic, onViewChang
       </div>
 
       {/* Mobile Menu Dropdown */}
-      <div className={`md:hidden absolute w-full bg-dark-900/98 backdrop-blur-xl border-b border-white/5 px-4 pt-2 pb-8 space-y-2 transition-all duration-300 origin-top shadow-2xl ${isMobileMenuOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 pointer-events-none'}`}>
+      <div className={`md:hidden absolute w-full bg-nav/98 backdrop-blur-xl border-b border-white/5 px-4 pt-2 pb-8 space-y-2 transition-all duration-300 origin-top shadow-2xl ${isMobileMenuOpen ? 'scale-y-100 opacity-100' : 'scale-y-0 opacity-0 pointer-events-none'}`}>
         {navLinks.map((link) => (
           <a
             key={link.name}

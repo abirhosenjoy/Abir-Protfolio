@@ -19,18 +19,19 @@
                     },
                     colors: {
                         brand: {
-                            50: '#f4f6f7',
-                            100: '#e9edef',
-                            400: '#4c6d81',
-                            500: '#37576b',
-                            600: '#233d4d', // User specified theme color
-                            900: '#101c23',
+                            50: '#f4f6f4',
+                            100: '#e8ecea',
+                            400: '#5c7a6b',
+                            500: '#3d5a4d',
+                            600: '#1A241E', 
+                            900: '#0d1310',
                         },
                         dark: {
-                            700: '#3d5a6d',
-                            800: '#2a4759',
-                            900: '#233d4d', // Updated background to match theme color
-                        }
+                            700: '#34453c',
+                            800: '#233028',
+                            900: '#1A241E',
+                        },
+                        nav: '#30364F' // New navigation bar color
                     }
                 }
             }
@@ -38,20 +39,25 @@
     </script>
     <style>
         .glass-card {
-            background: rgba(35, 61, 77, 0.7);
+            background: rgba(26, 36, 30, 0.75);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .text-gradient {
-            background: linear-gradient(to right, #4c6d81, #5eead4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background: none;
+            -webkit-text-fill-color: #ffffff;
+            color: #ffffff;
+        }
+        .name-gradient {
+            background: none;
+            -webkit-text-fill-color: #ffffff;
+            color: #ffffff;
         }
         .blob {
             position: absolute;
             filter: blur(80px);
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.2;
         }
         .loader-dots div {
             animation: bounce 0.6s infinite alternate;
@@ -79,9 +85,9 @@
         }
 
         @keyframes headline-glow {
-            0% { filter: brightness(1) drop-shadow(0 0 0 rgba(94, 234, 212, 0)); }
-            50% { filter: brightness(1.2) drop-shadow(0 0 15px rgba(94, 234, 212, 0.3)); }
-            100% { filter: brightness(1) drop-shadow(0 0 0 rgba(94, 234, 212, 0)); }
+            0% { filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0)); }
+            50% { filter: brightness(1.1) drop-shadow(0 0 20px rgba(255, 255, 255, 0.2)); }
+            100% { filter: brightness(1) drop-shadow(0 0 0 rgba(255, 255, 255, 0)); }
         }
         .headline-animated {
             animation: headline-glow 6s ease-in-out infinite;
@@ -104,18 +110,21 @@
 
         html {
             scrollbar-width: thin;
-            scrollbar-color: #5eead4 #233d4d;
+            scrollbar-color: #ffffff #1A241E;
         }
 
         body {
             overflow-x: hidden;
-            background-color: #233d4d;
+            background-color: #1A241E;
+            color: #e2e8f0;
+            margin: 0;
+            padding: 0;
         }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #233d4d; }
-        ::-webkit-scrollbar-thumb { background: #37576b; border-radius: 10px; border: 2px solid #233d4d; }
-        ::-webkit-scrollbar-thumb:hover { background: #4c6d81; }
+        ::-webkit-scrollbar-track { background: #1A241E; }
+        ::-webkit-scrollbar-thumb { background: #233028; border-radius: 10px; border: 2px solid #1A241E; }
+        ::-webkit-scrollbar-thumb:hover { background: #34453c; }
 
         @media print {
             body { 
@@ -162,12 +171,12 @@
     "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
     "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
     "react-easy-crop": "https://esm.sh/react-easy-crop@^5.2.0",
-    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.91.0"
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@^2.91.1"
   }
 }
 </script>
 </head>
-<body class="bg-dark-900 text-slate-300 font-sans antialiased selection:bg-cyan-500/30 selection:text-white">
+<body class="bg-dark-900 text-slate-100 font-sans antialiased selection:bg-blue-500/30 selection:text-white">
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
 </body>

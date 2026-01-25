@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Cropper from 'react-easy-crop';
 import { PortfolioData, Project, TimelineItem, Skill, Award, NewsPost, Achievement, NewsComment } from '../types';
@@ -40,7 +39,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ data, onSave, onLogout, onClose
     { id: 'skills', label: 'Skills', icon: 'fa-screwdriver-wrench' },
     { id: 'projects', label: 'Projects', icon: 'fa-diagram-project' },
     { id: 'experience', label: 'Experience', icon: 'fa-timeline' },
-    { id: 'awards', label: 'Awards', icon: 'fa-medal' },
     { id: 'news', label: 'News Archive', icon: 'fa-newspaper' },
   ];
 
@@ -518,25 +516,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ data, onSave, onLogout, onClose
                       <button onClick={() => { const n = [...editData.timeline]; n[tIdx].details.push('New Detail Item'); setEditData({...editData, timeline: n}); }} className="text-blue-500 hover:text-blue-400 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-2 transition-all">+ ADD DETAIL</button>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section id="admin-section-awards" className="scroll-mt-24">
-          <div className="flex items-center justify-between mb-14">
-            <div><h3 className="text-3xl font-black text-white uppercase tracking-tight mb-4">Awards & Accolades</h3><div className="h-[2px] w-48 bg-slate-800/60"></div></div>
-            <button onClick={() => setEditData({...editData, awards: [...editData.awards, { id: Date.now().toString(), title: 'New Award', detail: 'Recipient Year', icon: 'fa-earth-americas' }]})} className="bg-[#2563eb] hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-blue-600/20 active:scale-95 transition-all">+ New Award</button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {editData.awards.map((award, aIdx) => (
-              <div key={award.id} className="bg-[#1e293b]/20 p-10 rounded-[2.5rem] border border-slate-800/50 shadow-2xl relative flex gap-8 items-center group">
-                <button onClick={() => setEditData({...editData, awards: editData.awards.filter(a => a.id !== award.id)})} className="absolute top-6 right-6 text-red-500/30 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><i className="fa-solid fa-trash-can text-sm"></i></button>
-                <div className="flex flex-col items-center gap-4"><div className="w-24 h-24 rounded-[1.5rem] bg-[#111827] border border-slate-800 flex items-center justify-center text-4xl text-slate-500 shrink-0 shadow-inner group-hover:text-brand-400 transition-colors"><i className={`fa-solid ${award.icon}`}></i></div><input value={award.icon} onChange={(e) => { const n = [...editData.awards]; n[aIdx].icon = e.target.value; setEditData({...editData, awards: n}); }} className="w-full bg-[#111827] border border-slate-800/50 rounded-lg px-2 py-2 text-[10px] text-brand-500/80 font-mono text-center tracking-tighter outline-none transition-all" /></div>
-                <div className="flex-1 space-y-5">
-                  <div className="space-y-1.5"><label className="text-[9px] font-black uppercase text-slate-600 ml-1 tracking-[0.2em]">Title</label><input value={award.title} onChange={(e) => { const n = [...editData.awards]; n[aIdx].title = e.target.value; setEditData({...editData, awards: n}); }} className="w-full bg-[#111827]/60 border border-slate-800/50 rounded-2xl px-6 py-3.5 text-white font-black text-sm outline-none transition-all" /></div>
-                  <div className="space-y-1.5"><label className="text-[9px] font-black uppercase text-slate-600 ml-1 tracking-[0.2em]">Details</label><input value={award.detail} onChange={(e) => { const n = [...editData.awards]; n[aIdx].detail = e.target.value; setEditData({...editData, awards: n}); }} className="w-full bg-[#111827]/60 border border-slate-800/50 rounded-2xl px-6 py-3.5 text-brand-400 font-bold text-[11px] outline-none transition-all" /></div>
                 </div>
               </div>
             ))}
