@@ -46,14 +46,14 @@ const About: React.FC<AboutProps> = ({ bio, name }) => {
                 <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                   <span className="w-1 h-1 bg-cyan-400 rounded-full"></span> Focus
                 </span>
-                <span className="text-white font-bold text-sm tracking-tight">Biomedical AI</span>
+                <span className="text-white font-bold text-sm tracking-tight">Biomedical Equipment Development</span>
               </div>
               
               <div className="flex flex-col items-center md:items-start text-center md:text-left px-2 border-l border-white/10">
                 <span className="text-[10px] font-black text-cyan-400 uppercase tracking-widest mb-2 flex items-center gap-2">
                   <span className="w-1 h-1 bg-cyan-400 rounded-full"></span> Hometown
                 </span>
-                <span className="text-white font-bold text-sm tracking-tight">Natore, BD</span>
+                <span className="text-white font-bold text-sm tracking-tight">Rajbari, BD</span>
               </div>
               
               <div className="flex flex-col items-center md:items-start text-center md:text-left px-2 border-l border-white/10">
