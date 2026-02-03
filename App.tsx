@@ -11,6 +11,7 @@ import AdminPanel from './components/AdminPanel';
 import LoginPanel from './components/LoginPanel';
 import NewsPage from './components/NewsPage';
 import HomeNewsSection from './components/HomeNewsSection';
+import AIAssistant from './components/AIAssistant';
 import { INITIAL_DATA } from './constants';
 import { PortfolioData, NewsComment } from './types';
 import { supabase, checkCloudHealth } from './supabaseClient';
@@ -67,7 +68,7 @@ const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'portfolio' | 'news'>('portfolio');
   const [isLoading, setIsLoading] = useState(true);
-  const [cloudStatus, setCloudStatus] = useState<string>('Checking Cloud...');
+  const [cloudStatus, setCloudStatus] = useState<'connected' | 'local' | 'error'>('local');
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     try {
       return sessionStorage.getItem('is_admin_logged_in') === 'true';
@@ -77,17 +78,10 @@ const App: React.FC = () => {
   });
 
   const [portfolioData, setPortfolioData] = useState<PortfolioData | null>(null);
-  const dataRef = useRef<PortfolioData | null>(null);
-
-  useEffect(() => {
-    dataRef.current = portfolioData;
-  }, [portfolioData]);
 
   const initializeApp = async () => {
     try {
-      // 1. Try fetching from Cloud first
       const health = await checkCloudHealth();
-      setCloudStatus(health.message);
 
       if (health.ok) {
         const { data: cloudData, error } = await supabase
@@ -103,23 +97,25 @@ const App: React.FC = () => {
           
           setPortfolioData(parsedData);
           await setLocalBackup(parsedData);
+          setCloudStatus('connected');
           setIsLoading(false);
           return;
         }
       }
 
-      // 2. Fallback to Local Backup if Cloud fails or is empty
       const backup = await getLocalBackup();
       if (backup) {
         setPortfolioData(backup);
+        setCloudStatus(health.ok ? 'connected' : 'local');
       } else {
-        // 3. Absolute Fallback to hardcoded constants
         setPortfolioData(INITIAL_DATA);
         await setLocalBackup(INITIAL_DATA);
+        setCloudStatus(health.ok ? 'connected' : 'local');
       }
     } catch (err) {
-      console.error("Initialization failed, using defaults:", err);
+      console.error("Initialization failed:", err);
       setPortfolioData(INITIAL_DATA);
+      setCloudStatus('error');
     } finally {
       setIsLoading(false);
     }
@@ -134,13 +130,9 @@ const App: React.FC = () => {
 
   const persistData = async (newData: PortfolioData): Promise<boolean> => {
     try {
-      // Optimistic update
       setPortfolioData(newData);
-      
-      // Update local storage
       await setLocalBackup(newData);
 
-      // Attempt Cloud update
       const { error } = await supabase
         .from('portfolio_content')
         .upsert({ 
@@ -150,8 +142,9 @@ const App: React.FC = () => {
         });
 
       if (error) {
-        console.warn("Could not sync to cloud, stored locally only.", error);
-        // We still return true because local persistence worked
+        setCloudStatus('error');
+      } else {
+        setCloudStatus('connected');
       }
 
       return true;
@@ -249,7 +242,7 @@ const App: React.FC = () => {
           </div>
         </div>
         <p className="text-slate-500 font-black uppercase tracking-[0.4em] text-[10px] animate-pulse">
-          {cloudStatus}...
+          Establishing Uplink...
         </p>
       </div>
     );
@@ -275,7 +268,7 @@ const App: React.FC = () => {
             <Projects projects={portfolioData.projects} />
             <HomeNewsSection news={portfolioData.news} onReadMore={handleReadMore} />
             <Connect profile={portfolioData.profile} />
-            <Contact profile={portfolioData.profile} onAdminClick={handleAdminClick} />
+            <Contact profile={portfolioData.profile} onAdminClick={handleAdminClick} cloudStatus={cloudStatus} />
           </>
         ) : (
           <NewsPage 
@@ -288,6 +281,8 @@ const App: React.FC = () => {
           />
         )}
       </main>
+
+      <AIAssistant data={portfolioData} />
 
       {isAdminOpen && (
         <AdminPanel 

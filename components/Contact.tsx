@@ -1,14 +1,26 @@
-
 import React from 'react';
 import { Profile } from '../types';
 
 interface ContactProps {
   profile: Profile;
   onAdminClick?: () => void;
+  cloudStatus?: 'connected' | 'local' | 'error';
 }
 
-const Contact: React.FC<ContactProps> = ({ profile, onAdminClick }) => {
+const Contact: React.FC<ContactProps> = ({ profile, onAdminClick, cloudStatus = 'local' }) => {
   const currentYear = new Date().getFullYear();
+
+  const statusColors = {
+    connected: 'bg-emerald-500',
+    local: 'bg-amber-500',
+    error: 'bg-red-500'
+  };
+
+  const statusLabels = {
+    connected: 'Cloud Active',
+    local: 'Local Backup',
+    error: 'Offline'
+  };
 
   return (
     <footer id="contact" className="py-16 bg-dark-900 relative border-t border-slate-800/50 overflow-hidden">
@@ -51,21 +63,29 @@ const Contact: React.FC<ContactProps> = ({ profile, onAdminClick }) => {
           </div>
 
           {/* Interactive Status Line Link */}
-          <a 
-            href="#admin-login"
-            onClick={(e) => {
-              if (onAdminClick) {
-                e.preventDefault();
-                onAdminClick();
-              }
-            }}
-            className="flex items-center justify-center gap-2 text-slate-600 mb-12 px-4 py-1.5 bg-slate-800/10 rounded-full border border-slate-800/30 backdrop-blur-sm transition-all hover:text-slate-400 hover:border-slate-700 cursor-pointer no-underline group"
-          >
-            <i className="fa-solid fa-lock text-[10px] group-hover:scale-110 transition-transform"></i>
-            <span className="text-[9px] font-black uppercase tracking-[0.2em]">
-              Dashboard Access Secured
-            </span>
-          </a>
+          <div className="flex flex-col items-center gap-3 mb-12">
+            <a 
+              href="#admin-login"
+              onClick={(e) => {
+                if (onAdminClick) {
+                  e.preventDefault();
+                  onAdminClick();
+                }
+              }}
+              className="flex items-center justify-center gap-2 text-slate-600 px-4 py-1.5 bg-slate-800/10 rounded-full border border-slate-800/30 backdrop-blur-sm transition-all hover:text-slate-400 hover:border-slate-700 cursor-pointer no-underline group"
+            >
+              <i className="fa-solid fa-lock text-[10px] group-hover:scale-110 transition-transform"></i>
+              <span className="text-[9px] font-black uppercase tracking-[0.2em]">
+                Dashboard Access Secured
+              </span>
+            </a>
+
+            {/* Cloud Status Indicator */}
+            <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/5">
+              <span className={`w-1.5 h-1.5 rounded-full ${statusColors[cloudStatus]} animate-pulse`}></span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-slate-500">{statusLabels[cloudStatus]}</span>
+            </div>
+          </div>
 
           {/* Footer Credits */}
           <div className="w-full text-center border-t border-slate-800/30 pt-10">

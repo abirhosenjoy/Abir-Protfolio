@@ -1,20 +1,20 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
-import { ChatMessage, Profile } from '../types';
+import { ChatMessage, PortfolioData } from '../types';
 
 interface MultimodalMessage extends ChatMessage {
   image?: string; // base64 data
 }
 
 interface AIAssistantProps {
-  profile: Profile;
+  data: PortfolioData;
 }
 
-const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
+const AIAssistant: React.FC<AIAssistantProps> = ({ data }) => {
+  const { profile, projects, skills, timeline } = data;
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<MultimodalMessage[]>([
-    { role: 'model', text: `Hello! I'm ${profile.name}'s AI assistant. You can now send me images or text! Ask me about ${profile.name}'s work, or show me something to analyze.` }
+    { role: 'model', text: `Hello! I'm ${profile.name}'s official AI assistant. I'm trained on ${profile.name}'s professional history. Ask me about specific projects like ${projects[0]?.title || 'my work'} or my expertise in ${skills[0]?.title || 'Biomedical Engineering'}.` }
   ]);
   const [input, setInput] = useState('');
   const [selectedImage, setSelectedImage] = useState<{ data: string, mimeType: string } | null>(null);
@@ -52,7 +52,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
     
     setMessages(prev => [...prev, { 
       role: 'user', 
-      text: userText || (userImage ? "Sent an image" : ""),
+      text: userText || (userImage ? "Sent an image for analysis" : ""),
       image: userImage ? `data:${userImage.mimeType};base64,${userImage.data}` : undefined
     }]);
     
@@ -61,7 +61,6 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
     setIsTyping(true);
 
     try {
-      // Corrected: Initialize GoogleGenAI with the API_KEY directly from process.env
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const parts: any[] = [];
@@ -74,43 +73,57 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
         });
       }
       
+      // Constructing deep context for the AI
+      const systemContext = `
+        You are a high-level professional AI assistant for ${profile.fullName}. 
+        Use the following verified data to answer questions about them.
+        
+        BIO: ${profile.bio}
+        
+        PROJECTS:
+        ${projects.map(p => `- ${p.title} (${p.category}): ${p.description}`).join('\n')}
+        
+        SKILLS:
+        ${skills.map(s => `- ${s.title}: ${s.items.join(', ')}`).join('\n')}
+        
+        CAREER HIGHLIGHTS:
+        ${timeline.slice(0, 5).map(t => `- ${t.date}: ${t.title} at ${t.subtitle}`).join('\n')}
+
+        CONTACT: Email: ${profile.email}, Phone: ${profile.phone}, Location: ${profile.location}
+        
+        INSTRUCTIONS:
+        1. Be professional, innovative, and encouraging.
+        2. If asked about a project, provide specific details from the context.
+        3. If an image is provided, analyze it through the lens of a Biomedical Engineer if relevant.
+        4. Keep responses concise but impactful.
+      `;
+
       parts.push({
-        text: `
-          You are a professional portfolio assistant for ${profile.fullName}. 
-          Context about ${profile.name}:
-          - Bio: ${profile.bio}
-          - Contact: ${profile.email}, ${profile.phone}
-          - Location: ${profile.location}
-          - You can analyze images sent by the user. If they send a project screenshot or an medical image, offer professional BME insights.
-          
-          User Message: ${userText || "Please analyze this image."}
-        `
+        text: `${systemContext}\n\nUser Message: ${userText || "Please analyze this image based on your context."}`
       });
 
-      // Corrected: Updated generateContent call to follow multimodal structure and include thinkingBudget
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: { parts },
         config: {
           temperature: 0.7,
-          maxOutputTokens: 1000,
-          thinkingConfig: { thinkingBudget: 500 },
+          maxOutputTokens: 800,
+          thinkingConfig: { thinkingBudget: 400 },
         }
       });
 
-      // Corrected: Accessing .text property directly (not a method)
-      const responseText = response.text || "I've analyzed the request, but I couldn't generate a specific response. How else can I help?";
+      const responseText = response.text || "I've processed your request. How else can I assist with your inquiry about Abir's portfolio?";
       setMessages(prev => [...prev, { role: 'model', text: responseText }]);
     } catch (error) {
       console.error("Gemini Error:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "I encountered an error processing that. Please try again!" }]);
+      setMessages(prev => [...prev, { role: 'model', text: "I encountered an error connecting to my neural core. Please try again in a moment!" }]);
     } finally {
       setIsTyping(false);
     }
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[60]">
+    <div className="fixed bottom-6 right-6 z-[60] print:hidden">
       {isOpen ? (
         <div className="glass-card w-80 md:w-96 h-[550px] flex flex-col rounded-3xl shadow-2xl border border-slate-700 overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
           <div className="bg-brand-600 p-4 flex justify-between items-center">
@@ -121,7 +134,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
               <div>
                 <h3 className="text-white font-bold text-sm">{profile.name}'s Assistant</h3>
                 <span className="text-[10px] text-brand-100 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Multimodal Active
+                  <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span> Knowledge Base Synced
                 </span>
               </div>
             </div>
@@ -151,9 +164,9 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
             {isTyping && (
               <div className="flex justify-start">
                 <div className="bg-slate-800 p-3 rounded-2xl rounded-tl-none border border-slate-700 flex gap-1 items-center">
-                  <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"></div>
-                  <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce delay-100"></div>
-                  <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce delay-200"></div>
+                  <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce"></div>
+                  <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce delay-100"></div>
+                  <div className="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce delay-200"></div>
                 </div>
               </div>
             )}
@@ -195,7 +208,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
               <div className="flex-1 relative">
                 <input 
                   type="text"
-                  placeholder="Type a message..."
+                  placeholder="Ask about projects..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -218,10 +231,10 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ profile }) => {
           onClick={() => setIsOpen(true)}
           className="w-14 h-14 bg-brand-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition duration-300 group relative"
         >
-          <i className="fa-solid fa-message text-xl"></i>
-          <span className="absolute -top-1 -right-1 bg-red-500 w-4 h-4 rounded-full border-2 border-dark-900"></span>
+          <i className="fa-solid fa-robot text-xl"></i>
+          <span className="absolute -top-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-dark-900"></span>
           <div className="absolute right-full mr-4 bg-dark-900 px-3 py-1.5 rounded-lg border border-slate-700 text-xs font-bold text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-            Multimodal Assistant
+            Ask Portfolio Assistant
           </div>
         </button>
       )}
