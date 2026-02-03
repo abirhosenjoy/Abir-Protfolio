@@ -13,6 +13,7 @@ import NewsPage from './components/NewsPage';
 import HomeNewsSection from './components/HomeNewsSection';
 import { INITIAL_DATA } from './constants';
 import { PortfolioData, NewsComment } from './types';
+import { supabase, checkCloudHealth } from './supabaseClient';
 
 // --- IndexedDB Utility ---
 const DB_NAME = 'MuneemPortfolioDB';
@@ -66,6 +67,7 @@ const App: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [currentView, setCurrentView] = useState<'portfolio' | 'news'>('portfolio');
   const [isLoading, setIsLoading] = useState(true);
+  const [cloudStatus, setCloudStatus] = useState<string>('Checking Cloud...');
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     try {
       return sessionStorage.getItem('is_admin_logged_in') === 'true';
@@ -83,10 +85,35 @@ const App: React.FC = () => {
 
   const initializeApp = async () => {
     try {
+      // 1. Try fetching from Cloud first
+      const health = await checkCloudHealth();
+      setCloudStatus(health.message);
+
+      if (health.ok) {
+        const { data: cloudData, error } = await supabase
+          .from('portfolio_content')
+          .select('content')
+          .eq('id', 'main_config')
+          .maybeSingle();
+
+        if (!error && cloudData?.content) {
+          const parsedData = typeof cloudData.content === 'string' 
+            ? JSON.parse(cloudData.content) 
+            : cloudData.content;
+          
+          setPortfolioData(parsedData);
+          await setLocalBackup(parsedData);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // 2. Fallback to Local Backup if Cloud fails or is empty
       const backup = await getLocalBackup();
       if (backup) {
         setPortfolioData(backup);
       } else {
+        // 3. Absolute Fallback to hardcoded constants
         setPortfolioData(INITIAL_DATA);
         await setLocalBackup(INITIAL_DATA);
       }
@@ -107,11 +134,29 @@ const App: React.FC = () => {
 
   const persistData = async (newData: PortfolioData): Promise<boolean> => {
     try {
+      // Optimistic update
       setPortfolioData(newData);
+      
+      // Update local storage
       await setLocalBackup(newData);
+
+      // Attempt Cloud update
+      const { error } = await supabase
+        .from('portfolio_content')
+        .upsert({ 
+          id: 'main_config', 
+          content: newData,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) {
+        console.warn("Could not sync to cloud, stored locally only.", error);
+        // We still return true because local persistence worked
+      }
+
       return true;
     } catch (err: any) {
-      console.error("Local persistence failed:", err);
+      console.error("Data persistence failed:", err);
       return false;
     }
   };
@@ -204,7 +249,7 @@ const App: React.FC = () => {
           </div>
         </div>
         <p className="text-slate-500 font-black uppercase tracking-[0.4em] text-[10px] animate-pulse">
-          Initializing Portfolio...
+          {cloudStatus}...
         </p>
       </div>
     );
